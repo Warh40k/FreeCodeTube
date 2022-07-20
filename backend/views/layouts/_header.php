@@ -6,6 +6,7 @@ use yii\bootstrap4\NavBar;
 NavBar::begin([
     'brandLabel' => Yii::$app->name,
     'brandUrl' => Yii::$app->homeUrl,
+    'options' => ['class' => 'navbar navbar-expand-lg navbar-light bg-light shadow-sm']
 ]);
 $menuItems = [
     ['label' => 'Home', 'url' => ['/site/index']],
