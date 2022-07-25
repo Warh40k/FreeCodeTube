@@ -4,11 +4,9 @@ namespace backend\controllers;
 
 use common\models\Video;
 use yii\data\ActiveDataProvider;
-use yii\debug\panels\DumpPanel;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\web\UploadedFile;
 
 /**
  * VideoController implements the CRUD actions for Video model.
@@ -86,12 +84,8 @@ class VideoController extends Controller
         var_dump($file);
         echo '</pre>';*/
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
-                return $this->redirect(['view', 'video_id' => $model->video_id]);
-            }
-        } else {
-            $model->loadDefaultValues();
+        if ($model->load($this->request->post()) && $model->save()) {
+            return $this->redirect(['view', 'video_id' => $model->video_id]);
         }
 
         return $this->render('create', [
