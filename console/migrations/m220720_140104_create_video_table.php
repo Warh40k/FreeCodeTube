@@ -24,7 +24,7 @@ class m220720_140104_create_video_table extends Migration
             'has_thumbnail' => $this -> boolean(),
             'video_name' => $this -> string(512),
             'created_at' => $this -> integer(11),
-            'last_time_update' => $this -> integer(11),
+            'updated_at' => $this -> integer(11),
             'created_by' => $this->integer(11),
         ]);
 

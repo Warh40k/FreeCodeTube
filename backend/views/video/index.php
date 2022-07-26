@@ -34,12 +34,12 @@ $this->params['breadcrumbs'][] = $this->title;
             //'has_thumbnail',
             //'video_name',
             //'created_at',
-            //'last_time_update:datetime',
+            //'updated_at:datetime',
             //'created_by',
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Video $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'id' => $model->video_id]);
+                    return Url::toRoute([$action, 'video_id' => $model->video_id]);
                  }
             ],
         ],

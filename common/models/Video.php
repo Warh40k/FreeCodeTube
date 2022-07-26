@@ -3,6 +3,8 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
 use yii\helpers\FileHelper;
 use yii\web\UploadedFile;
 
@@ -17,7 +19,7 @@ use yii\web\UploadedFile;
  * @property int|null $has_thumbnail
  * @property string|null $video_name
  * @property int|null $created_at
- * @property int|null $last_time_update
+ * @property int|null $updated_at
  * @property int|null $created_by
  *
  * @property User $createdBy
@@ -25,6 +27,8 @@ use yii\web\UploadedFile;
 class Video extends \yii\db\ActiveRecord
 {
 
+    const STATUS_UNLISTED = 0;
+    const STATUS_PUBLISHED = 0;
     /**
      * @var UploadedFile
      */
@@ -37,6 +41,17 @@ class Video extends \yii\db\ActiveRecord
         return '{{%video}}';
     }
 
+    public function behaviors()
+    {
+        return [
+            TimestampBehavior::class,
+            [
+                'class' => BlameableBehavior::class,
+                'updatedByAttribute' => false
+            ]
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -45,10 +60,12 @@ class Video extends \yii\db\ActiveRecord
         return [
             [['video_id', 'title'], 'required'],
             [['description'], 'string'],
-            [['status', 'has_thumbnail', 'created_at', 'last_time_update', 'created_by'], 'integer'],
+            [['status', 'has_thumbnail', 'created_at', 'updated_at', 'created_by'], 'integer'],
             [['video_id'], 'string', 'max' => 16],
             [['title', 'tags', 'video_name'], 'string', 'max' => 512],
             [['video_id'], 'unique'],
+            [['has_thumbnail'], 'default', 'value' => 0],
+            [['status'], 'default', 'value' => self::STATUS_UNLISTED],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
@@ -67,7 +84,7 @@ class Video extends \yii\db\ActiveRecord
             'has_thumbnail' => 'Has Thumbnail',
             'video_name' => 'Video Name',
             'created_at' => 'Created At',
-            'last_time_update' => 'Last Time Update',
+            'updated_at' => 'Updated At',
             'created_by' => 'Created By',
         ];
     }
