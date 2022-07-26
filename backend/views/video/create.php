@@ -14,9 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <div class="row">
+    <?php ActiveForm::begin([
+        'options' => ['enctype' => 'multipart/form-data']
+    ]); ?>
 
-    </div>
     <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="upload-icon mb-4">
             <i class="fas fa-upload"></i>
@@ -26,13 +27,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </p>
         <p class="text-muted">Your video will be private until you publish it</p>
 
-        <?php ActiveForm::begin([
-            'options' => ['encoding' => 'multipart/form-data']
-        ]) ?>
-
-        <button class="btn btn-primary btn-file">
+        <button type="button" class="btn btn-primary btn-file">
             Select File
-            <input type="file" id="videoFile" name="video"/>
+            <input type="file" id="videoFile" name="video">
         </button>
 
         <?php ActiveForm::end() ?>

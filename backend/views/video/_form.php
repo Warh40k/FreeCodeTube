@@ -18,7 +18,7 @@ use yii\bootstrap4\ActiveForm;
 
     <?= $form->field($model, 'description')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'tags')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'tags')->textarea(['rows' => 6]) ?>
 
     <?= $form->field($model, 'status')->textInput() ?>
 

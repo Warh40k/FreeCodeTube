@@ -1,5 +1,6 @@
 <?php
 
+use common\models\Video;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\grid\ActionColumn;
@@ -38,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'class' => ActionColumn::className(),
                 'urlCreator' => function ($action, Video $model, $key, $index, $column) {
-                    return Url::toRoute([$action, 'video_id' => $model->video_id]);
+                    return Url::toRoute([$action, 'id' => $model->video_id]);
                  }
             ],
         ],
