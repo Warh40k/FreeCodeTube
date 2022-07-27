@@ -4,11 +4,12 @@
 /** @var string $content */
 
 use yii\bootstrap4\Html;
-use backend\assets\AppAsset;
+use frontend\assets\AppAsset;
 
 AppAsset::register($this);
-?>
-<?php $this->beginPage() ?>
+
+$this->beginPage(); ?>
+
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
 <head>
