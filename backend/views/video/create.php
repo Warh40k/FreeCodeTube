@@ -14,9 +14,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
-    <?php ActiveForm::begin([
+
+    <?php $form = ActiveForm::begin([
         'options' => ['enctype' => 'multipart/form-data']
     ]); ?>
+
+
+    <?php echo $form->errorSummary($model) ?>
 
     <div class="d-flex flex-column justify-content-center align-items-center">
         <div class="upload-icon mb-4">

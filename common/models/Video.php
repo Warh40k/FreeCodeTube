@@ -2,10 +2,12 @@
 
 namespace common\models;
 
+use Imagine\Image\Box;
 use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\helpers\FileHelper;
+use yii\imagine\Image;
 use yii\web\UploadedFile;
 
 /**
@@ -66,7 +68,9 @@ class Video extends \yii\db\ActiveRecord
             [['title', 'tags', 'video_name'], 'string', 'max' => 512],
             [['video_id'], 'unique'],
             [['has_thumbnail'], 'default', 'value' => 0],
+            [['thumbnail'], 'image', 'minWidth' => 1280],
             [['status'], 'default', 'value' => self::STATUS_UNLISTED],
+            [['video'], 'file', 'checkExtensionByMimeType' => false, 'extensions' => 'mkv, mp4'],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
@@ -133,11 +137,15 @@ class Video extends \yii\db\ActiveRecord
             $this->video->saveAs($videoPath);
         }
         if ($this->thumbnail){
-            $thumbnailPath = Yii::getAlias('@frontend/web/storage/thumbs/' . $this->video_id . '.mp4');
+            $thumbnailPath = Yii::getAlias('@frontend/web/storage/thumbs/' . $this->video_id . '.jpg');
             if (!is_dir($thumbnailPath)) {
                 FileHelper::createDirectory(dirname($thumbnailPath));
             }
             $this->thumbnail->saveAs($thumbnailPath);
+            Image::getImagine()
+                ->open($thumbnailPath)
+                ->thumbnail(new Box(1280, 1280))
+                ->save();
         }
 
         return true;
@@ -146,6 +154,13 @@ class Video extends \yii\db\ActiveRecord
     public function getVideoLink()
     {
         return Yii::$app->params['frontendUrl'].'/storage/videos/'.$this->video_id.'.mp4';
+    }
+
+    public function getThumbnailLink()
+    {
+        return $this->has_thumbnail ?
+            Yii::$app->params['frontendUrl'].'/storage/thumbs/'.$this->video_id.'.jpg'
+            : '';
     }
 
     public function getStatusLabels()
