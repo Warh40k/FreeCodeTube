@@ -3,9 +3,11 @@
 namespace backend\controllers;
 
 use common\models\Video;
+use PHPUnit\Framework\Warning;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
+use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -50,17 +52,8 @@ class VideoController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Video::find()
-                ->where(['created_by' => Yii::$app->user->id]),
-            /*
-            'pagination' => [
-                'pageSize' => 50
-            ],
-            'sort' => [
-                'defaultOrder' => [
-                    'video_id' => SORT_DESC,
-                ]
-            ],
-            */
+                ->creator(Yii::$app->user->id)
+                ->latest()
         ]);
 
         return $this->render('index', [
@@ -144,6 +137,13 @@ class VideoController extends Controller
      */
     public function actionDelete($video_id)
     {
+        $path = "/usr/share/xampp/htdocs/FreeCodeTube/frontend/web";
+        if (file_exists($path."/storage/thumbs/$video_id.jpg")){
+            echo "result ".unlink("/usr/share/xampp/htdocs/FreeCodeTube/frontend/web/storage/thumbs/".$video_id.".jpg");
+        }
+        if (file_exists($path."/storage/videos/$video_id.mp4")){
+            echo "result ".unlink("/usr/share/xampp/htdocs/FreeCodeTube/frontend/web/storage/videos/".$video_id.".mp4", );
+        }
         $this->findModel($video_id)->delete();
 
         return $this->redirect(['index']);
