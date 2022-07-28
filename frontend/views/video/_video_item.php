@@ -16,7 +16,7 @@
         <h6 class="card-title m-0"><?php echo $model->title?></h6>
         <p class="text-muted card-text m-0"><?php echo $model->createdBy->username ?></p>
         <p class="text-muted card-text m-0">
-            140 views <?php echo Yii::$app->formatter->asRelativeTime($model->created_at) ?>
+            <?php echo $model->getViews()->count()?> views . <?php echo Yii::$app->formatter->asRelativeTime($model->created_at) ?>
         </p>
     </div>
 </div>
