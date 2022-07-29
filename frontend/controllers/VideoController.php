@@ -63,14 +63,46 @@ class VideoController extends Controller
 
     public function actionLike($video_id)
     {
-       $video = $this->findVideo($video_id);
-       $videoLike = new VideoLike();
-       $videoLike->video_id = $video_id;
-       $videoLike->user_id = \Yii::$app->user->id;
-       $videoLike->created_at = time();
-       if ($videoLike->save()) {
-           return "success";
-       }
+        $user_id = \Yii::$app->user->id;
+
+        $video = $this->findVideo($video_id);
+        $videoLikeDislike = VideoLike::find()
+            ->userIdVideoId($user_id, $video_id)
+            ->one();
+        if (!$videoLikeDislike){
+            $this->saveLikeDislike($video_id, $user_id, VideoLike::TYPE_LIKE);
+        } else if($videoLikeDislike->type == VideoLike::TYPE_LIKE){
+            $videoLikeDislike->delete();
+        } else {
+            $videoLikeDislike->delete();
+            $this->saveLikeDislike($video_id, $user_id, VideoLike::TYPE_LIKE);
+        }
+
+        return $this->renderAjax('_buttons',[
+           'model' => $video
+        ]);
+    }
+
+    public function actionDislike($video_id)
+    {
+        $user_id = \Yii::$app->user->id;
+
+        $video = $this->findVideo($video_id);
+        $videoLikeDislike = VideoLike::find()
+            ->userIdVideoId($user_id, $video_id)
+            ->one();
+        if (!$videoLikeDislike){
+            $this->saveLikeDislike($video_id, $user_id, VideoLike::TYPE_DISLIKE);
+        } else if($videoLikeDislike->type == VideoLike::TYPE_DISLIKE){
+            $videoLikeDislike->delete();
+        } else {
+            $videoLikeDislike->delete();
+            $this->saveLikeDislike($video_id, $user_id, VideoLike::TYPE_DISLIKE);
+        }
+
+        return $this->renderAjax('_buttons',[
+            'model' => $video
+        ]);
     }
 
     protected function findVideo($video_id){
@@ -80,5 +112,15 @@ class VideoController extends Controller
            throw new NotFoundHttpException('Video does not exist');
        }
        return $video;
+    }
+
+    public function saveLikeDislike($videoId, $userId, $type)
+    {
+        $videoLikeDislike = new VideoLike();
+        $videoLikeDislike->video_id = $videoId;
+        $videoLikeDislike->type = $type;
+        $videoLikeDislike->user_id = $userId;
+        $videoLikeDislike->created_at = time();
+        $videoLikeDislike->save();
     }
 }

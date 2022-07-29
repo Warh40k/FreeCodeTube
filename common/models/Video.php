@@ -25,6 +25,9 @@ use yii\web\UploadedFile;
  * @property int|null $created_by
  *
  * @property User $createdBy
+ * @property \common\models\VideoLike[] $likes
+ * @property \common\models\VideoLike[] $dislikes
+ *
  */
 class Video extends \yii\db\ActiveRecord
 {
@@ -70,7 +73,7 @@ class Video extends \yii\db\ActiveRecord
             [['has_thumbnail'], 'default', 'value' => 0],
             [['thumbnail'], 'image', 'minWidth' => 1280],
             [['status'], 'default', 'value' => self::STATUS_UNLISTED],
-            [['video'], 'file', 'checkExtensionByMimeType' => false, 'extensions' => 'mkv, mp4'],
+            [['video'], 'file', 'checkExtensionByMimeType' => false, 'extensions' => 'mp4'],
             [['created_by'], 'exist', 'skipOnError' => true, 'targetClass' => User::className(), 'targetAttribute' => ['created_by' => 'id']],
         ];
     }
@@ -110,6 +113,33 @@ class Video extends \yii\db\ActiveRecord
         return $this->hasMany(VideoView::class, ['video_id' => 'video_id']);
     }
 
+    public function getLikes() //likes
+    {
+        return $this->hasMany(VideoLike::class, ['video_id' => 'video_id'])
+            ->liked();
+    }
+
+    public function getDislikes() //dislikes
+    {
+        return $this->hasMany(VideoLike::class, ['video_id' => 'video_id'])
+            ->disliked();
+    }
+
+    public function isLikedBy($user_id)
+    {
+        return VideoLike::find()
+            ->userIdVideoId($user_id, $this->video_id)
+            ->liked()
+            ->one();
+    }
+
+    public function isDislikedBy($user_id)
+    {
+        return VideoLike::find()
+            ->userIdVideoId($user_id, $this->video_id)
+            ->disliked()
+            ->one();
+    }
     /**
      * {@inheritdoc}
      * @return \common\models\query\VideoQuery the active query used by this AR class.
@@ -130,7 +160,7 @@ class Video extends \yii\db\ActiveRecord
         if($this->thumbnail){
             $this->has_thumbnail = 1;
         }
-        $saved = parent::save($runValidation, $attributeNames);
+        $saved = parent::save($runValidation, $attributeNames); // parent - родительский класс (ActiveRecord)
         if (!$saved){
             return false;
         }

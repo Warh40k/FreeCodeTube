@@ -2,6 +2,7 @@
 /**@var $model \common\models\Video */
 
 use yii\helpers\Url;
+use yii\widgets\Pjax;
 
 ?>
 <div class="row">
@@ -20,15 +21,16 @@ use yii\helpers\Url;
                     <?php echo Yii::$app->formatter->asDate($model->created_at)?></p>
             </div>
             <div>
-                <a href="<?php echo Url::to(['/video/like', 'video_id' => $model->video_id])?>"
-                   data-method="post" class="btn btn-sm btn-outline-primary">
-                    <i class="fa-solid fa-thumbs-up"></i> 9
-                </a>
-                <a href="<?php echo Url::to(['/video/like', 'video_id' => $model->video_id])?>"
-                   data-method="post" class="btn btn-sm btn-outline-primary">
-                    <i class="fa-solid fa-thumbs-down"></i> 2
-                </a>
+                <?php Pjax::begin() ?>
+                    <?php echo $this->render('_buttons', [
+                            'model' => $model
+                    ]) ?>
+                <?php Pjax::end() ?>
             </div>
+        </div>
+        <div>
+            <p><?php echo \yii\helpers\Html::encode($model->createdBy->username) ?></p>
+            <?php echo \yii\helpers\Html::encode($model->description)?>
         </div>
     </div>
 
