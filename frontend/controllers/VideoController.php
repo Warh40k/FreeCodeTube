@@ -123,4 +123,15 @@ class VideoController extends Controller
         $videoLikeDislike->created_at = time();
         $videoLikeDislike->save();
     }
+
+    public function actionSearch($keyword)
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query'  => Video::find()->published()->latest()
+                ->byKeyword($keyword)
+        ]);
+        return $this->render('search', [
+            'dataProvider' => $dataProvider
+        ]);
+    }
 }

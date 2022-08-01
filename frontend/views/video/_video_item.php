@@ -1,5 +1,8 @@
 <?php
 /** @var $model \common\models\Video */
+
+use yii\helpers\Html;
+
 ?>
 
 <div class="card m-1" style="width: 17rem;">
@@ -13,8 +16,12 @@
                 </video>
             </div>
         </a>
-        <h6 class="card-title m-0"><?php echo $model->title?></h6>
-        <p class="text-muted card-text m-0"><?php echo $model->createdBy->username ?></p>
+        <h6 class="text-muted card-text m-0"><?php echo $model->title?></h6>
+        <p>
+            <?php echo Html::a($model->createdBy->username, [
+                '/channel/view', 'username' => $model->createdBy->username
+            ]) ?>
+        </p>
         <p class="text-muted card-text m-0">
             <?php echo $model->getViews()->count()?> views . <?php echo Yii::$app->formatter->asRelativeTime($model->created_at) ?>
         </p>

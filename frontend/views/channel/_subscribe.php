@@ -10,4 +10,4 @@ use yii\helpers\Url;
        role="button">
            Subscribe
         <i class="fa-regular fa-bell"></i>
-    </a> 9
+    </a> <?php echo $channel->getSubscribers()->count() ?>
