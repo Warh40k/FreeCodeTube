@@ -3,11 +3,9 @@
 namespace backend\controllers;
 
 use common\models\Video;
-use PHPUnit\Framework\Warning;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\filters\AccessControl;
-use yii\helpers\FileHelper;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -58,19 +56,6 @@ class VideoController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
-        ]);
-    }
-
-    /**
-     * Displays a single Video model.
-     * @param string $video_id Video ID
-     * @return string
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($video_id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($video_id),
         ]);
     }
 
