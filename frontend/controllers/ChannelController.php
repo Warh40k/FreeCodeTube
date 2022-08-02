@@ -1,4 +1,6 @@
 <?php
+// @TODO FIX USER SUBSCRIBITION TO HIMSELF
+// @TODO ADD THUMBNAIL SELECTION TO CHANNEL
 
 namespace frontend\controllers;
 

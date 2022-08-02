@@ -18,7 +18,7 @@ class VideoController extends Controller
         return [
             'access' => [
                 'class' => AccessControl::class,
-                'only' => ['like', 'dislike'],
+                'only' => ['like', 'dislike','history'],
                 'rules' => [
                     [
                         'allow' => true,
@@ -56,8 +56,16 @@ class VideoController extends Controller
        $videoView->created_at = time();
        $videoView->save();
 
+       $similarVideos = Video::find()
+           ->published()
+           ->andWhere(['NOT', ['video_id' => $video_id]])
+           ->byKeyword($video->title)
+           ->limit(10)
+           ->all();
+
        return $this->render('view', [
-           'model' => $video
+           'model' => $video,
+           'similarVideos' => $similarVideos
        ]);
     }
 
@@ -105,25 +113,6 @@ class VideoController extends Controller
         ]);
     }
 
-    protected function findVideo($video_id){
-
-       $video = Video::findOne($video_id);
-       if (!$video){
-           throw new NotFoundHttpException('Video does not exist');
-       }
-       return $video;
-    }
-
-    public function saveLikeDislike($videoId, $userId, $type)
-    {
-        $videoLikeDislike = new VideoLike();
-        $videoLikeDislike->video_id = $videoId;
-        $videoLikeDislike->type = $type;
-        $videoLikeDislike->user_id = $userId;
-        $videoLikeDislike->created_at = time();
-        $videoLikeDislike->save();
-    }
-
     public function actionSearch($keyword)
     {
         $query = Video::find()->published()->latest();
@@ -138,4 +127,41 @@ class VideoController extends Controller
             'dataProvider' => $dataProvider
         ]);
     }
+
+    protected function findVideo($video_id){
+
+       $video = Video::findOne($video_id);
+       if (!$video){
+           throw new NotFoundHttpException('Video does not exist');
+       }
+       return $video;
+    }
+
+    public function actionHistory()
+    {
+        $query = Video::find()
+            ->select('video.*, MAX(vv.created_at) as max_date')
+            ->innerJoin('video_view as vv', 'vv.video_id = video.video_id')
+            ->where('user_id = :user_id',
+                [ 'user_id' => \Yii::$app->user->id ])
+            ->groupBy('video_id')
+            ->orderBy('max_date DESC');
+        $dataProvider = new ActiveDataProvider([
+            'query'  => $query
+        ]);
+        return $this->render('history', [
+            'dataProvider' => $dataProvider
+        ]);
+    }
+
+    public function saveLikeDislike($videoId, $userId, $type)
+    {
+        $videoLikeDislike = new VideoLike();
+        $videoLikeDislike->video_id = $videoId;
+        $videoLikeDislike->type = $type;
+        $videoLikeDislike->user_id = $userId;
+        $videoLikeDislike->created_at = time();
+        $videoLikeDislike->save();
+    }
+
 }
